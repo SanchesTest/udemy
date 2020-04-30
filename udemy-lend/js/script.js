@@ -87,15 +87,15 @@ window.addEventListener('DOMContentLoaded', function () {
 
   //================ MODAL
 
-  function modalWindow(openModal){
+  function modalWindow(openModal) {
 
     let overlay = document.querySelector('.overlay'),
-        close = document.querySelector('.popup-close'),
-        open = document.querySelectorAll(openModal);
+      close = document.querySelector('.popup-close'),
+      open = document.querySelectorAll(openModal);
 
-    for(let i = 0; i < open.length; i++){
+    for (let i = 0; i < open.length; i++) {
 
-      open[i].addEventListener('click', function(){
+      open[i].addEventListener('click', function () {
         overlay.style.display = 'block';
         this.classList.add('more-splash');
         document.body.style.overflow = 'hidden';
@@ -113,5 +113,105 @@ window.addEventListener('DOMContentLoaded', function () {
   modalWindow('.more');
   modalWindow('.description-btn');
 
-});
+  //================ FORM
 
+  function feedbackForm(formItem){
+
+    let message = {
+      loading: 'Loading...',
+      success: 'Thank you, we will contact you shortly!',
+      failure: 'Something went wrong...'
+    };
+
+    let form = document.querySelector(formItem),
+        input = form.getElementsByTagName('input'),
+        statusMessage = document.createElement('div');
+
+    statusMessage.classList.add('status');
+
+    form.addEventListener('submit', function(event){
+      event.preventDefault();
+      form.appendChild(statusMessage);
+
+      let request = new XMLHttpRequest();
+      request.open('POST', 'server.php');
+      request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+      let formData = new FormData(form);
+      request.send(formData);
+
+      request.addEventListener('readystatechange', function(){
+        if(request.readyState < 4){
+          statusMessage.innerHTML = message.loading;
+        } else if(request.readyState === 4 && request.status == 200){
+          statusMessage.innerHTML = message.success;
+        } else{
+          statusMessage.innerHTML = message.failure;
+        }
+      });
+
+      for(let i = 0; i < input.length; i++){
+        input[i].value = '';
+      }
+
+    });
+
+  }
+
+  feedbackForm('#form');
+  feedbackForm('.main-form');
+  
+
+      
+  //================ FORM JSON
+
+  // let message = {
+  //   loading: 'Loading...',
+  //   success: 'Thank you, we will contact you shortly!',
+  //   failure: 'Something went wrong...'
+  // };
+
+  // let form = document.querySelector('.main-form'),
+  //   input = form.getElementsByTagName('input'),
+  //   statusMessage = document.createElement('div');
+
+  // statusMessage.classList.add('status');
+
+  // form.addEventListener('submit', function (event) {
+  //   event.preventDefault();
+  //   form.appendChild(statusMessage);
+
+  //   let request = new XMLHttpRequest();
+  //   request.open('POST', 'server.php');
+
+  //   // Меняем заголовки
+  //   request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+
+  //   let formData = new FormData(form);
+
+  //   // промежуточный обьект для преобразования в JSON
+  //   let obj = {};
+  //   formData.forEach(function(value, key){
+  //     obj[key] = value;
+  //   });
+  //   let json = JSON.stringify(obj);
+
+  //   request.send(json);
+
+  //   request.addEventListener('readystatechange', function () {
+  //     if (request.readyState < 4) {
+  //       statusMessage.innerHTML = message.loading;
+  //     } else if (request.readyState === 4 && request.status == 200) {
+  //       statusMessage.innerHTML = message.success;
+  //     } else {
+  //       statusMessage.innerHTML = message.failure;
+  //     }
+  //   });
+
+  //   for (let i = 0; i < input.length; i++) {
+  //     input[i].value = '';
+  //   }
+
+  // });
+
+});
